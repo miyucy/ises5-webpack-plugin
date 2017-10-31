@@ -8,17 +8,23 @@ class IsES5Plugin {
   }
 
   apply(compiler) {
-    compiler.plugin("compilation", function(compilation) {
-      compilation.plugin("after-optimize-assets", function(assets) {
+    compiler.plugin("emit", (compilation, callback) => {
+      console.log(compilation.namedChunks);
+      callback();
+    });
+    compiler.plugin("compilation", compilation => {
+      compilation.plugin("after-optimize-assets", assets => {
         Object.entries(assets).forEach(([chunkName, cachedSource]) => {
-          const source = cachedSource.source();
-          try {
-            Acorn.parse(source, { ecmaVersion: 5 });
-          } catch (err) {
-            if (err instanceof SyntaxError) {
-              compilation.errors.push(new IsES5Error(err, source));
-            } else {
-              compilation.errors.push(err);
+          if (chunkName.endsWith(".js")) {
+            const source = cachedSource.source();
+            try {
+              Acorn.parse(source, { ecmaVersion: 5 });
+            } catch (err) {
+              if (err instanceof SyntaxError) {
+                compilation.errors.push(new IsES5Error(chunkName, err, source));
+              } else {
+                compilation.errors.push(err);
+              }
             }
           }
         });
@@ -28,9 +34,9 @@ class IsES5Plugin {
 }
 
 class IsES5Error {
-  constructor(acornSyntaxError, source) {
+  constructor(chunkName, acornSyntaxError, source) {
     this.name = "IsES5Error";
-    this.message = acornSyntaxError.message;
+    this.message = `${chunkName}: ${acornSyntaxError.message}`;
     this.details = this.generateDetails(source, acornSyntaxError.loc);
     this.err = acornSyntaxError;
   }

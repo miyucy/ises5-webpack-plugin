@@ -21,5 +21,6 @@ module.exports = {
       }
     ]
   },
+  devtool: "#source-map",
   plugins: [new IsES5Plugin()]
 };
