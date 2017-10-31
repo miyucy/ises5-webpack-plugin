@@ -8,10 +8,6 @@ class IsES5Plugin {
   }
 
   apply(compiler) {
-    compiler.plugin("emit", (compilation, callback) => {
-      console.log(compilation.namedChunks);
-      callback();
-    });
     compiler.plugin("compilation", compilation => {
       compilation.plugin("after-optimize-assets", assets => {
         Object.entries(assets).forEach(([chunkName, cachedSource]) => {
