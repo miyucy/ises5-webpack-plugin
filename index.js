@@ -8,8 +8,8 @@ class IsES5Plugin {
   }
 
   apply(compiler) {
-    compiler.plugin("compilation", compilation => {
-      compilation.plugin("after-optimize-assets", assets => {
+    compiler.hooks.compilation.tap("IsES5Plugin", compilation => {
+      compilation.hooks.afterOptimizeAssets.tap("IsES5Plugin", assets => {
         Object.entries(assets).forEach(([chunkName, cachedSource]) => {
           if (chunkName.endsWith(".js")) {
             const source = cachedSource.source();
