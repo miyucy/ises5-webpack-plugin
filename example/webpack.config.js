@@ -1,5 +1,6 @@
 const path = require("path");
 const IsES5Plugin = require("../index.js");
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   entry: path.join(__dirname, "src", "app.js"),
@@ -15,7 +16,7 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["env"]
+            presets: ["@babel/preset-env"]
           }
         }
       }
