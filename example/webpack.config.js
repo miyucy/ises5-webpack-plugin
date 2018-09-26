@@ -23,5 +23,8 @@ module.exports = {
     ]
   },
   devtool: "#source-map",
-  plugins: [new IsES5Plugin()]
+  plugins: [new IsES5Plugin()],
+  optimization: {
+    minimizer: [new UglifyJsPlugin()]
+  }
 };
