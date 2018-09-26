@@ -10,11 +10,12 @@ class IsES5Plugin {
   apply(compiler) {
     compiler.hooks.compilation.tap("IsES5Plugin", compilation => {
       compilation.hooks.afterOptimizeAssets.tap("IsES5Plugin", assets => {
-        Object.entries(assets).forEach(([chunkName, cachedSource]) => {
+        Object.keys(assets).forEach(chunkName => {
           if (chunkName.endsWith(".js")) {
+            const cachedSource = assets[chunkName];
             const source = cachedSource.source();
             try {
-              Acorn.parse(source, { ecmaVersion: 5 });
+              Acorn.parse(source, { ecmaVersion: this.options.ecmaVersion });
             } catch (err) {
               if (err instanceof SyntaxError) {
                 compilation.errors.push(new IsES5Error(chunkName, err, source));
